@@ -1,7 +1,7 @@
 import Classes.Lfsr;
 
 public class Main {
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         String tapsHex = "8005";
         int loops = 10;
         String seedHex = "1";
