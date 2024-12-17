@@ -19,6 +19,13 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
 
+    - name: Show Project Structure
+      run: |
+        echo "Current directory:"
+        pwd
+        echo "Directory contents:"
+        ls -R
+
     - name: Download Dependencies
       run: |
         mkdir -p lib
@@ -28,16 +35,37 @@ jobs:
     - name: Compile
       run: |
         mkdir -p out
-        # Compile main classes
-        javac -cp "lib/*" -d out src/main/Classes/*.java
-        # Compile test classes
-        javac -cp "out:lib/*" -d out src/tests/Tests/*.java
+        # Liste et compile les fichiers principaux
+        MAIN_FILES=$(find src/Classes -name "*.java")
+        if [ ! -z "$MAIN_FILES" ]; then
+          echo "Compiling main files:"
+          echo "$MAIN_FILES"
+          javac -cp "lib/*" -d out $MAIN_FILES
+        else
+          echo "No main files found"
+        fi
+        
+        # Liste et compile les fichiers de test
+        TEST_FILES=$(find src/Tests -name "*.java")
+        if [ ! -z "$TEST_FILES" ]; then
+          echo "Compiling test files:"
+          echo "$TEST_FILES"
+          javac -cp "out:lib/*" -d out $TEST_FILES
+        else
+          echo "No test files found"
+        fi
 
     - name: Run tests
       run: |
-        # Trouve tous les fichiers *Test.java, les convertit en noms de classes et les exécute
+        # Trouve et exécute tous les tests
         TEST_CLASSES=$(find out/Tests -name "*Test.class" | sed 's/out\///' | sed 's/\.class$//' | tr '/' '.')
-        java -cp "out:lib/*" org.junit.runner.JUnitCore $TEST_CLASSES
+        if [ ! -z "$TEST_CLASSES" ]; then
+          echo "Running test classes:"
+          echo "$TEST_CLASSES"
+          java -cp "out:lib/*" org.junit.runner.JUnitCore $TEST_CLASSES
+        else
+          echo "No test classes found"
+        fi
 
     - name: Generate Test Report
       if: always()
@@ -45,7 +73,11 @@ jobs:
         echo "# Test Results" > test-report.md
         echo "\`\`\`" >> test-report.md
         TEST_CLASSES=$(find out/Tests -name "*Test.class" | sed 's/out\///' | sed 's/\.class$//' | tr '/' '.')
-        java -cp "out:lib/*" org.junit.runner.JUnitCore $TEST_CLASSES >> test-report.md 2>&1 || true
+        if [ ! -z "$TEST_CLASSES" ]; then
+          java -cp "out:lib/*" org.junit.runner.JUnitCore $TEST_CLASSES >> test-report.md 2>&1 || true
+        else
+          echo "No test classes found" >> test-report.md
+        fi
         echo "\`\`\`" >> test-report.md
 
     - name: Upload Test Report
