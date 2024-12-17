@@ -5,11 +5,11 @@ import java.nio.charset.StandardCharsets;
 
 public class MD5 {
     /**
-     * Calcule le hash MD5 d'une chaîne de caractères.
-     * @param input La chaîne à hasher
-     * @return Le hash MD5 en hexadécimal (32 caractères)
-     * @throws IllegalArgumentException si input est null
-     * @throws RuntimeException si une erreur survient pendant le hachage
+     * Computes the MD5 hash of a string.
+     * @param input The string to hash
+     * @return The MD5 hash in hexadecimal (32 characters)
+     * @throws IllegalArgumentException if input is null
+     * @throws RuntimeException if an error occurs during hashing
      */
     public static String hash(String input) {
         if (input == null) {
@@ -17,39 +17,39 @@ public class MD5 {
         }
 
         try {
-            // Obtention d'une instance de MessageDigest configurée pour MD5
-            // MessageDigest est une classe qui implémente l'algorithme de hachage
+            // Get an instance of MessageDigest configured for MD5
+            // MessageDigest is a class that implements the hashing algorithm
             MessageDigest md = MessageDigest.getInstance("MD5");
 
-            // Conversion de la chaîne d'entrée en tableau de bytes avec l'encodage UTF-8
-            // puis calcul du hash MD5 sur ces bytes
-            // Le résultat est un tableau de 16 bytes (128 bits, taille standard MD5)
+            // Convert the input string to a byte array using UTF-8 encoding
+            // then compute the MD5 hash of these bytes
+            // The result is a 16-byte array (128 bits, standard MD5 size)
             byte[] messageDigest = md.digest(input.getBytes(StandardCharsets.UTF_8));
 
-            // Création d'un StringBuilder pour construire la représentation hexadécimale
-            // Il sera plus efficace qu'une simple String pour les concaténations
+            // Create a StringBuilder to build the hexadecimal representation
+            // It will be more efficient than a simple String for concatenations
             StringBuilder hexString = new StringBuilder();
 
-            // Pour chaque byte du hash MD5
+            // For each byte of the MD5 hash
             for (byte b : messageDigest) {
-                // String.format("%02x", b & 0xff) fait plusieurs choses :
-                // 1. b & 0xff : convertit le byte en un entier non signé (0-255)
-                //    car les bytes en Java sont signés (-128 à 127)
-                // 2. %02x : formate l'entier en hexadécimal sur 2 positions
-                //    - % indique le début du format
-                //    - 0 indique de remplir avec des zéros
-                //    - 2 indique la largeur minimale
-                //    - x indique la notation hexadécimale en minuscules
+                // String.format("%02x", b & 0xff) does several things:
+                // 1. b & 0xff: converts the byte to an unsigned integer (0-255)
+                //    because bytes in Java are signed (-128 to 127)
+                // 2. %02x: formats the integer in hexadecimal with 2 positions
+                //    - % indicates the start of the format
+                //    - 0 indicates to pad with zeros
+                //    - 2 indicates the minimum width
+                //    - x indicates lowercase hexadecimal notation
                 hexString.append(String.format("%02x", b & 0xff));
             }
 
-            // Conversion finale du StringBuilder en String
-            // Le résultat sera une chaîne de 32 caractères hexadécimaux
+            // Final conversion of the StringBuilder to a String
+            // The result will be a 32-character hexadecimal string
             return hexString.toString();
 
         } catch (Exception e) {
-            // En cas d'erreur (très rare car MD5 est un algorithme standard)
-            // on encapsule l'exception dans une RuntimeException
+            // In case of an error (very rare as MD5 is a standard algorithm)
+            // we encapsulate the exception in a RuntimeException
             throw new RuntimeException("Error computing MD5 hash", e);
         }
     }

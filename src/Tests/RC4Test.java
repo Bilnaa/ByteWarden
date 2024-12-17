@@ -22,7 +22,7 @@ public class RC4Test {
     public void testInit() {
         RC4 testRc4 = new RC4();
         testRc4.init(KEY);
-        Assert.assertNotNull("L'initialisation ne devrait pas produire un tableau nul", testRc4);
+        Assert.assertNotNull("Initialization should not produce a null array", testRc4);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -38,7 +38,7 @@ public class RC4Test {
     @Test
     public void testEncrypt() {
         String encrypted = rc4.encrypt(CLEAR_TEXT);
-        Assert.assertEquals("Le texte chiffré ne correspond pas au résultat attendu",
+        Assert.assertEquals("The encrypted text does not match the expected result",
                 ENCRYPTED_TEXT, encrypted);
     }
 
@@ -46,7 +46,7 @@ public class RC4Test {
     public void testEncryptEmptyString() {
         try {
             rc4.encrypt("");
-            Assert.fail("Une chaîne vide devrait lever une exception");
+            Assert.fail("An empty string should throw an exception");
         } catch (IllegalArgumentException e) {
             Assert.assertTrue(true);
         }
@@ -60,7 +60,7 @@ public class RC4Test {
     @Test
     public void testDecrypt() {
         String decrypted = rc4.decrypt(ENCRYPTED_TEXT);
-        Assert.assertEquals("Le texte déchiffré ne correspond pas au texte original",
+        Assert.assertEquals("The decrypted text does not match the original text",
                 CLEAR_TEXT, decrypted);
     }
 
@@ -68,7 +68,7 @@ public class RC4Test {
     public void testDecryptEmptyString() {
         try {
             rc4.decrypt("");
-            Assert.fail("Une chaîne vide devrait lever une exception");
+            Assert.fail("An empty string should throw an exception");
         } catch (IllegalArgumentException e) {
             Assert.assertTrue(true);
         }
@@ -82,18 +82,18 @@ public class RC4Test {
     @Test
     public void testFullCycle() {
         String encrypted = rc4.encrypt(CLEAR_TEXT);
-        rc4.init(KEY); // Réinitialisation nécessaire pour le déchiffrement
+        rc4.init(KEY); // Reinitialization needed for decryption
         String decrypted = rc4.decrypt(encrypted);
-        Assert.assertEquals("Le cycle complet de chiffrement/déchiffrement a échoué",
+        Assert.assertEquals("The full encryption/decryption cycle failed",
                 CLEAR_TEXT, decrypted);
     }
 
     @Test
     public void testDifferentKeys() {
         String encrypted1 = rc4.encrypt(CLEAR_TEXT);
-        rc4.init("5678"); // Utilisation d'une clé différente
+        rc4.init("5678"); // Using a different key
         String encrypted2 = rc4.encrypt(CLEAR_TEXT);
-        Assert.assertNotEquals("Des clés différentes devraient produire des chiffrements différents",
+        Assert.assertNotEquals("Different keys should produce different encryptions",
                 encrypted1, encrypted2);
     }
 
@@ -102,7 +102,7 @@ public class RC4Test {
         String encrypted1 = rc4.encrypt(CLEAR_TEXT);
         rc4.init(KEY);
         String encrypted2 = rc4.encrypt(CLEAR_TEXT);
-        Assert.assertEquals("Le même texte avec la même clé devrait produire le même chiffrement",
+        Assert.assertEquals("The same text with the same key should produce the same encryption",
                 encrypted1, encrypted2);
     }
 
@@ -112,7 +112,7 @@ public class RC4Test {
         String encrypted = rc4.encrypt(longText);
         rc4.init(KEY);
         String decrypted = rc4.decrypt(encrypted);
-        Assert.assertEquals("Le chiffrement/déchiffrement d'un texte long a échoué",
+        Assert.assertEquals("Encryption/decryption of a long text failed",
                 longText, decrypted);
     }
 
@@ -122,7 +122,7 @@ public class RC4Test {
         String encrypted = rc4.encrypt(specialText);
         rc4.init(KEY);
         String decrypted = rc4.decrypt(encrypted);
-        Assert.assertEquals("Le chiffrement/déchiffrement avec caractères spéciaux a échoué",
+        Assert.assertEquals("Encryption/decryption with special characters failed",
                 specialText, decrypted);
     }
 }
