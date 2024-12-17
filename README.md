@@ -1,0 +1,1 @@
+![Tests](https://github.com/Bilnaa/ByteWarden/actions/workflows/tests.yml/badge.svg)
