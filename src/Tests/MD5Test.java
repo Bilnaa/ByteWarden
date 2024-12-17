@@ -41,7 +41,7 @@ public class MD5Test {
         String input = "test123";
         String firstHash = MD5.hash(input);
         String secondHash = MD5.hash(input);
-        Assert.assertEquals("Le même input devrait produire le même hash", firstHash, secondHash);
+        Assert.assertEquals("The same input should produce the same hash", firstHash, secondHash);
     }
 
     @Test(expected = RuntimeException.class)
@@ -53,14 +53,14 @@ public class MD5Test {
     public void testCaseSensitivity() {
         String lowerCase = MD5.hash("hello");
         String upperCase = MD5.hash("HELLO");
-        Assert.assertNotEquals("Les hashs de différentes casses devraient être différents",
+        Assert.assertNotEquals("Hashes of different cases should be different",
                 lowerCase, upperCase);
     }
 
     @Test
     public void testHashLength() {
         String result = MD5.hash("test");
-        Assert.assertEquals("La longueur du hash MD5 devrait être de 32 caractères",
+        Assert.assertEquals("The length of the MD5 hash should be 32 characters",
                 32, result.length());
     }
 
@@ -68,7 +68,7 @@ public class MD5Test {
     public void testWhitespaceHandling() {
         String withSpaces = MD5.hash("test test");
         String withoutSpaces = MD5.hash("testtest");
-        Assert.assertNotEquals("Les espaces devraient affecter le hash",
+        Assert.assertNotEquals("Spaces should affect the hash",
                 withSpaces, withoutSpaces);
     }
 }
