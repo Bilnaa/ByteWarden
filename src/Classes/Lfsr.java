@@ -5,31 +5,31 @@ public class Lfsr {
     char taps; 
 
     public Lfsr(char state, char taps) {
-        this.state = state; //représente l'état actuel du LFSR sous forme d'un entier (char sur 16 bits)
-        this.taps = taps; //mask indiquant les positions (bits) pour la rétroactio
+        this.state = state; //represents the current state of the LFSR as a 16-bit integer (char)
+        this.taps = taps; //mask indicating the positions (bits) for feedback
     }
-    //méthode calculant la parité d'un nombre (nombre de bits à 1) pour déterminer le bit de rétroaction
-    static int parity(int mask) {
+    //method calculating the parity of a number (number of bits set to 1) to determine the feedback bit
+    public static int parity(int mask) {
         int p = 0;
         for ( ; mask > 0 ; mask >>>= 1)
             p ^= mask & 1;
         return p;
     }
-    //méthode convertissant un entier en chaîne convertoraire de 16 bits.
-    static String convertor(int registers) {
+    //method converting an integer to a 16-bit binary string
+    public static String convertor(int registers) {
         return String.format("%16s",
-                             Integer.toBinaryString(registers)).replace(" ", "0"); //affiche un chaine de 16bits en laissant le bit de point fort s'il est égale à 0
+                             Integer.toBinaryString(registers)).replace(" ", "0"); //displays a 16-bit string, keeping the leading zero if it is 0
     }
 
     public String fibonacci(int loops) {
         String alea = ""; 
         for (int i = 0 ; i < loops ; i++) {
             System.out.println("Debug info: state = " + convertor(this.state));
-            int bit = Lfsr.parity(this.state & this.taps); //calcul le mask à partir du XOR 
+            int bit = Lfsr.parity(this.state & this.taps); //calculates the mask from the XOR
             System.out.println("bit = " + bit);
-            alea += this.state & 1; // recupère le bit de poids faible 
-            this.state >>= 1; //decalage des bits sur la droite 
-            this.state |= bit << 15; //remet le bit de poids faible 15 positions à gauche (dernier bit)
+            alea += this.state & 1; // retrieves the least significant bit
+            this.state >>= 1; //shifts the bits to the right
+            this.state |= bit << 15; //sets the least significant bit 15 positions to the left (last bit)
         }
         return alea;
     }
@@ -38,10 +38,10 @@ public class Lfsr {
         String alea = "";
         for (int i = 0 ; i < loops ; i++) {
             System.out.println("Debug info: state = " + convertor(this.state));
-            int bit = this.state & 1; //récuère le bit de poids faible
+            int bit = this.state & 1; //retrieves the least significant bit
             alea += bit;
-            this.state >>= 1; //décalage des bits sur la droite
-            if (bit == 1) //si le bit de poids faible est 1 on modifie le l'état par la porte Xor
+            this.state >>= 1; //shifts the bits to the right
+            if (bit == 1) //if the least significant bit is 1, modifies the state with the XOR gate
                 this.state ^= this.taps;
         }
         return alea;
@@ -51,11 +51,11 @@ public class Lfsr {
     /***
     * 
     *
-    * @param tapsHex une valeur indiquant la position du bit en hexa
-    * @param loops nombre de boucle pour les methodes galois et fibonacci
-    * @param seedHex seed pour l'algorythme
-    * @param mode choix entre les deux méthodes galois et fibonacci
-    * @return un resultat (alea) en 16 bits
+    * @param tapsHex a value indicating the bit position in hex
+    * @param loops number of loops for the galois and fibonacci methods
+    * @param seedHex seed for the algorithm
+    * @param mode choice between the two methods galois and fibonacci
+    * @return a result (alea) in 16 bits
     */  
     public String lfsr(String tapsHex, int loops, String seedHex, String mode) {
         char taps = (char) Integer.parseInt(tapsHex, 16);
@@ -65,7 +65,7 @@ public class Lfsr {
         this.taps = taps;
 
         String result;
-        if (mode.equalsIgnoreCase("galois")) { //Execute la méthode en fonctionne du choix de fonction de transformation
+        if (mode.equalsIgnoreCase("galois")) { //Executes the method based on the chosen transformation function
             result = this.galois(loops); 
         } else { 
             result = this.fibonacci(loops);
@@ -75,4 +75,3 @@ public class Lfsr {
     }
     
 }
-
