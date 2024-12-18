@@ -3,35 +3,17 @@ import java.util.Scanner;
 
 public class VigenereAlgo {
 
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
 
-        // Ask user to type their phrase
-        System.out.print("Enter a phrase to encrypt: ");
-        String plainText = scanner.nextLine();
+        String plainText = "";
 
-        // Ask user to type their key and validate it
-        String key;
-        while (true) {
-            System.out.print("Enter your key (no numbers allowed): ");
-            key = scanner.nextLine();
-            if (isValidKey(key)) {
-                break;
-            } else {
-                System.out.println("Invalid key. The key must not contain numbers. Please try again.");
-            }
-        }
-
+        String key = "";
         // Call encryption function and display the result
         String encryptedText = encrypt(plainText, key);
-        System.out.println("Encrypted text: " + encryptedText);
+
 
         // Call decryption function and display the result
         String decryptedText = decrypt(encryptedText, key);
-        System.out.println("Decrypted text: " + decryptedText);
 
-        scanner.close();
-    }
 
     // Validate that the key does not contain numbers
     private static boolean isValidKey(String key) {
