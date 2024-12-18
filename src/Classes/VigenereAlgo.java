@@ -1,12 +1,12 @@
 package Classes;
-import java.util.Scanner;
+
 
 public class VigenereAlgo {
 
 
-        String plainText = "";
+        String plainText = "TEST";
 
-        String key = "";
+        String key = "LONGKEY";
         // Call encryption function and display the result
         String encryptedText = encrypt(plainText, key);
 
@@ -27,6 +27,10 @@ public class VigenereAlgo {
 
     // Encrypt the plaintext using the Vigenere cipher algorithm
     public static String encrypt(String plainText, String key) {
+        if (!isValidKey(key)) {
+            throw new IllegalArgumentException("Key must contain only alphabetic characters.");
+        }
+
         StringBuilder encryptedText = new StringBuilder();
 
         // Clean the key to contain only alphabetical characters
@@ -57,6 +61,10 @@ public class VigenereAlgo {
 
     // Decrypt the ciphertext using the Vigenere cipher algorithm
     public static String decrypt(String encryptedText, String key) {
+        if (!isValidKey(key)) {
+            throw new IllegalArgumentException("Key must contain only alphabetic characters.");
+        }
+
         StringBuilder decryptedText = new StringBuilder();
 
         // Clean the key to contain only alphabetical characters
@@ -85,14 +93,18 @@ public class VigenereAlgo {
         return decryptedText.toString();
     }
 
+
     // Generate a full-length key matching the text length, ignoring non-alphabetic characters
-    private static String generateFullKey(String text, String key) {
+    public static String generateFullKey(String text, String key) {
         StringBuilder fullKey = new StringBuilder();
         int keyLength = key.length();
         int keyIndex = 0;
 
-        for (char c : text.toCharArray()) {
-            if (Character.isLetter(c)) {
+        // go threw the text length
+        for (int i = 0; i < text.length(); i++) {
+            char currentChar = text.charAt(i);
+            if (Character.isLetter(currentChar)) {
+                // if keyLength > KeyIndex : troncate the keyLength to keyIndex
                 fullKey.append(key.charAt(keyIndex % keyLength));
                 keyIndex++;
             }
@@ -100,6 +112,9 @@ public class VigenereAlgo {
 
         return fullKey.toString();
     }
+
+
+
 
     // Remove non-alphabetical characters from the key
     private static String cleanKey(String key) {
