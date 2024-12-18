@@ -1,0 +1,9 @@
+{
+  "sites": [
+    {
+      "siteName": "example.com",
+      "password": "password1",
+      "username": "user1"
+    }
+  ]
+}
