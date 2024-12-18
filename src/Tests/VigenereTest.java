@@ -69,7 +69,7 @@ public class VigenereTest {
     public void testEncrypt_keyLongerThanText() {
         String plainText = "TEST";
         String key = "LONGKEY";
-        String expectedCipherText = "ULPG";
+        String expectedCipherText = "ESFZ";
         String result = VigenereAlgo.encrypt(plainText, key);
 
         assertEquals(expectedCipherText, result);
@@ -78,7 +78,7 @@ public class VigenereTest {
 
     @Test
     public void testDecrypt_keyLongerThanText() {
-        String cipherText = "ULPG";
+        String cipherText = "ESFZ";
         String key = "LONGKEY";
         String expectedPlainText = "TEST";
         assertEquals(expectedPlainText, vigenere.decrypt(cipherText, key));
