@@ -17,5 +17,6 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="bytedeco.javacv.platform" level="project" />
   </component>
 </module>
