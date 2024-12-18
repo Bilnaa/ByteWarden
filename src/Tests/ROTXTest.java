@@ -46,8 +46,6 @@ public class ROTXTest {
         assertEquals("Les caractères non alphabétiques ne sont pas correctement gérés", expected, result);
     }
 
-
-
     // Test on an empty text
     @Test
     public void testEmptyString() {
@@ -58,5 +56,53 @@ public class ROTXTest {
         assertEquals("La chaîne vide n'a pas été gérée correctement", expected, result);
     }
 
+    // Test de décryptage avec une rotation positive
+    @Test
+    public void testDecryptionPositive() {
+        String input = "def";
+        int shift = 3;
+        String expected = "abc"; // "def" avec ROT(-3) devient "abc"
+        String result = ROTX.decryptROT(input, shift);
+        assertEquals("Le texte n'a pas été correctement décrypté", expected, result);
+    }
 
+    // Test de décryptage avec une rotation négative
+    @Test
+    public void testDecryptionNegative() {
+        String input = "xyz";
+        int shift = -3;
+        String expected = "abc"; // "xyz" avec ROT(3) devient "abc"
+        String result = ROTX.decryptROT(input, shift);
+        assertEquals("Le texte n'a pas été correctement décrypté", expected, result);
+    }
+
+    // Test de décryptage avec une rotation nulle
+    @Test
+    public void testDecryptionZero() {
+        String input = "abc";
+        int shift = 0;
+        String expected = "abc"; // ROT(0) ne modifie pas le texte
+        String result = ROTX.decryptROT(input, shift);
+        assertEquals("La décryptation nulle n'a pas fonctionné comme prévu", expected, result);
+    }
+
+    // Test de décryptage avec des caractères non alphabétiques
+    @Test
+    public void testDecryptionNonAlphabeticCharacters() {
+        String input = "def 123!";
+        int shift = 3;
+        String expected = "abc 123!"; // Les caractères non alphabétiques ne doivent pas être affectés
+        String result = ROTX.decryptROT(input, shift);
+        assertEquals("Les caractères non alphabétiques ne sont pas correctement décryptés", expected, result);
+    }
+
+    // Test de décryptage avec une chaîne vide
+    @Test
+    public void testDecryptionEmptyString() {
+        String input = "";
+        int shift = 5;
+        String expected = ""; // La chaîne vide ne doit pas être modifiée
+        String result = ROTX.decryptROT(input, shift);
+        assertEquals("La chaîne vide n'a pas été décryptée correctement", expected, result);
+    }
 }
