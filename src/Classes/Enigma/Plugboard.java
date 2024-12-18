@@ -4,11 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Plugboard {
-    // Map to store the letter pairs for swapping
-    private Map<Character, Character> connections;
+    private Map<Character, Character> connections; // Map to store the letter pairs for swapping
 
     public Plugboard() {
-        connections = new HashMap<>();
+        connections = new HashMap<>(); // Initialize the connections map
     }
 
     /**
@@ -18,17 +17,14 @@ public class Plugboard {
      * @throws IllegalArgumentException if letters are already connected
      */
     public void connect(char a, char b) {
-        // Convert to uppercase for consistency
-        a = Character.toUpperCase(a);
+        a = Character.toUpperCase(a); // Convert to uppercase for consistency
         b = Character.toUpperCase(b);
         
-        // Check if letters are already connected
         if (connections.containsKey(a) || connections.containsKey(b)) {
-            throw new IllegalArgumentException("Letters are already connected");
+            throw new IllegalArgumentException("Letters are already connected"); // Check if letters are already connected
         }
         
-        // Create bidirectional connection
-        connections.put(a, b);
+        connections.put(a, b); // Create bidirectional connection
         connections.put(b, a);
     }
 
@@ -38,7 +34,7 @@ public class Plugboard {
      * @return Swapped letter if connection exists, original letter otherwise
      */
     public char swap(char c) {
-        c = Character.toUpperCase(c);
-        return connections.getOrDefault(c, c);
+        c = Character.toUpperCase(c); // Convert to uppercase for consistency
+        return connections.getOrDefault(c, c); // Swap the letter if connection exists
     }
 }
