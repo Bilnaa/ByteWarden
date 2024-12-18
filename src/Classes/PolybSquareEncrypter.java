@@ -25,7 +25,7 @@ public class PolybSquareEncrypter {
      * The succession of numbers (XY) recovered according to the characters of the plain text to encode.
      */
     private final List<String> polybCodeResults = new ArrayList<>();
-
+    // TODO need to clear this array after sending to the rest of the system;
 
     // Constructor.
     public PolybSquareEncrypter(PolybSquareLayout layoutChoice) {
@@ -83,6 +83,35 @@ public class PolybSquareEncrypter {
         System.out.println("Unrecognized character");
         return null;
         //return "__";
+    }
+
+    public final String decrypt(String encryptedText)
+    {
+        // local
+        StringBuilder decryptedCharacters = new StringBuilder("");
+
+        for (int i = 0;i < encryptedText.length(); i+=2) {
+            char firstChar = encryptedText.charAt(i);
+            char secondChar = encryptedText.charAt(i+1);
+
+            decryptedCharacters.append(getCharacterFromPolybSquareCode(firstChar, secondChar));
+        }
+
+        return decryptedCharacters.toString();
+    }
+
+    /**
+     * @param firstChar X
+     * @param secondChar Y
+     * @return code
+     */
+    private final char getCharacterFromPolybSquareCode(char firstChar, char secondChar) {
+        //System.out.println(firstChar + " " + secondChar);
+        int x = Character.getNumericValue(firstChar);
+        int y = Character.getNumericValue(secondChar);
+        // table are manipulated Y X
+        // - 1 beccause table index start at 0 and not 1.
+        return PolybSquareTable[y - 1][x - 1];
     }
 
 
