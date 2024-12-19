@@ -4,12 +4,15 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 
 /**
- * The class managing access to all the possible layout for the polybSquare Encrypter
+ * The class managing access to all the possible layout for the polybSquare Encrypter.
  */
 public class PolybSquareLayoutCollection {
 
     // Fields.
-    // All character of the latin alphabet are listed from a to z
+    /**
+     * All character of the latin alphabet are listed from a to z in successive rows
+     *  top to bottom.
+     */
     private final char[][] horizontal = {
         {'a','b','c','d','e'},
         {'f','g','h','i','j'},
@@ -18,6 +21,10 @@ public class PolybSquareLayoutCollection {
         {'u','v','x','y','z'},
     };
 
+    /**
+     * All character of the latin alphabet are listed from a to z in successive cols
+     * left to right.
+     */
     private final char[][] vertical = {
             {'a','f','k','p','u'},
             {'b','g','l','q','v'},
@@ -26,18 +33,23 @@ public class PolybSquareLayoutCollection {
             {'e','j','o','t','z'},
     };
 
+    /**
+     * The collection of all the possible layouts.
+     */
     private final Dictionary<PolybSquareLayout, char[][]> polybSquareTables = new Hashtable<>();
-    //{{
-    //    put(PolybSquareAlphabet.VERTICAL, vertical);
-    //}}
 
-    // CONSTRUCTOR.
+    // Constructor.
     public PolybSquareLayoutCollection() {
         polybSquareTables.put(PolybSquareLayout.VERTICAL, vertical);
         polybSquareTables.put(PolybSquareLayout.HORIZONTAL, horizontal);
     }
 
     // Functions.
+    /**
+     * Getter function for a polyb square table layout.
+     * @param alphabet the enum value corresponding to the possible layout selectable by user.
+     * @return a 2D array representing the polybSquare table.
+     */
     public char[][] getPolybSquareLayout(PolybSquareLayout alphabet)
     {
         // TODO Add error management
