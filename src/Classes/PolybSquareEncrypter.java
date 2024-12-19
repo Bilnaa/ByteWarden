@@ -115,22 +115,4 @@ public class PolybSquareEncrypter {
         // - 1 beccause table index start at 0 and not 1.
         return PolybSquareTable[y - 1][x - 1];
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
