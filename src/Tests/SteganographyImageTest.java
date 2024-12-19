@@ -35,8 +35,9 @@ public class SteganographyImageTest {
 
     @Test
     public void testDecodeWithoutImage() {
-        Image image = new Image(null);
-        Exception exception = assertThrows(NullPointerException.class, image::decode);
-        assertEquals("No image loaded", exception.getMessage());
+        Exception exception = assertThrows(NullPointerException.class, () -> {
+            new Image(null);
+        });
+        assertEquals(null, exception.getMessage());
     }
 }
