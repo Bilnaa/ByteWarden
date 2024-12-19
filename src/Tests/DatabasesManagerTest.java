@@ -15,7 +15,7 @@ public class DatabasesManagerTest {
 
     @Before
     public void setUp() {
-        testFile = new File("test_databases.json");
+        testFile = new File("src/Tests/test_databases.json");
         dbManager = new DatabasesManager(testFile);
 
         if (testFile.exists()) {
