@@ -16,7 +16,7 @@ public class SiteManagerTest {
 
     @Before
     public void setUp() {
-        testFile = new File("src/Tests/test_sites.json");
+        testFile = new File("src/Tests/assets/test_sites.json");
         siteManager = new SiteManager(testFile);
 
         if (testFile.exists()) {
