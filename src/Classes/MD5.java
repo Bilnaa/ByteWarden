@@ -3,7 +3,7 @@ package Classes;
 import java.security.MessageDigest;
 import java.nio.charset.StandardCharsets;
 
-public class MD5 {
+public class MD5 extends Hash {
     /**
      * Computes the MD5 hash of a string.
      * @param input The string to hash
@@ -11,7 +11,8 @@ public class MD5 {
      * @throws IllegalArgumentException if input is null
      * @throws RuntimeException if an error occurs during hashing
      */
-    public static String hash(String input) {
+    @Override
+    public String calculateHash(String input) {
         if (input == null) {
             throw new IllegalArgumentException("Input cannot be null");
         }
