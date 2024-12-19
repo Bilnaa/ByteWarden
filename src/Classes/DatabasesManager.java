@@ -15,14 +15,14 @@ import java.util.Map;
 public class DatabasesManager {
     private final File databasesFile;
     private final Map<String, String> databases;
-
+    Sha256 sha256 = new Sha256();
     public DatabasesManager(File databasesFile) {
         this.databasesFile = databasesFile;
         this.databases = loadDatabases();
     }
 
     public boolean verifyDatabase(String dbName, String password) {
-        String hashedPassword = PasswordUtils.hashPassword(password);
+        String hashedPassword = (password);
         return databases.containsKey(dbName) && databases.get(dbName).equals(hashedPassword);
     }
 
@@ -30,7 +30,7 @@ public class DatabasesManager {
         if (databases.containsKey(dbName)) {
             throw new IllegalArgumentException("Database already exists.");
         }
-        String hashedPassword = PasswordUtils.hashPassword(password);
+        String hashedPassword = sha256.calculateHash(password);
         databases.put(dbName, hashedPassword);
         saveDatabases();
     }
