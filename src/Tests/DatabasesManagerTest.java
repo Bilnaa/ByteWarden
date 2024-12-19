@@ -52,7 +52,7 @@ public class DatabasesManagerTest {
 
     @Test
     public void testLoadEmptyDatabases() {
-        Map<String, String> databases = dbManager.loadDatabases();
+            Map<String, String> databases = dbManager.loadDatabases();
         assertTrue(databases.isEmpty());
     }
 }

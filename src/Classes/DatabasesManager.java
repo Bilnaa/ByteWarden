@@ -22,7 +22,7 @@ public class DatabasesManager {
     }
 
     public boolean verifyDatabase(String dbName, String password) {
-        String hashedPassword = (password);
+        String hashedPassword = sha256.calculateHash(password);
         return databases.containsKey(dbName) && databases.get(dbName).equals(hashedPassword);
     }
 
