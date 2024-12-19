@@ -19,9 +19,9 @@
       <root url="jar://$MAVEN_REPOSITORY$/org/bytedeco/leptonica/1.85.0-1.5.11/leptonica-1.85.0-1.5.11.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/bytedeco/tesseract/5.5.0-1.5.11/tesseract-5.5.0-1.5.11.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/openjfx/javafx-graphics/17/javafx-graphics-17.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/org/openjfx/javafx-graphics/17/javafx-graphics-17-win-x86-monocle.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/openjfx/javafx-graphics/17/javafx-graphics-17-mac-aarch64.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/openjfx/javafx-base/17/javafx-base-17.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/org/openjfx/javafx-base/17/javafx-base-17-win-x86-monocle.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/openjfx/javafx-base/17/javafx-base-17-mac-aarch64.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/bytedeco/javacpp-platform/1.5.11/javacpp-platform-1.5.11.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/bytedeco/javacpp/1.5.11/javacpp-1.5.11-android-arm64.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/bytedeco/javacpp/1.5.11/javacpp-1.5.11-android-x86_64.jar!/" />
