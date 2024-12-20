@@ -1,137 +1,153 @@
 package Classes;
 
 import java.io.File;
+import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Menu {
-    // Main function, starting point of the program
     public static void main(String[] args) {
-        // Create a scanner object for user input
         Scanner scanner = new Scanner(System.in);
-        // File where the database information is stored
         File databasesFile = new File("databases.json");
-        // Initialize the database manager
-        DatabasesManager dbManager = new DatabasesManager(databasesFile);
-
-        // Display a welcome message
-        System.out.println("Welcome to the Encryption/Decryption Program");
-        // Start an infinite loop to show the main menu
+        
         while (true) {
-            // Display the options in the main menu
-            System.out.println("Choose an option:");
+            System.out.println("\nChoose an option:");
             System.out.println("1. Choose an existing database");
             System.out.println("2. Create a new database");
             System.out.println("3. Exit");
-            // Read user choice
-            int dbChoice = scanner.nextInt();
-            scanner.nextLine(); // Clear buffer
+            int choice = scanner.nextInt();
+            scanner.nextLine();
 
-            // Process the user choice using a switch statement
-            switch (dbChoice) {
-                case 1 -> handleExistingDatabase(scanner, dbManager); // Handle selecting an existing database
-                case 2 -> handleNewDatabase(scanner, dbManager); // Handle creating a new database
-                case 3 -> { // Exit the program
+            switch (choice) {
+                case 1 -> handleExistingDatabase(scanner);
+                case 2 -> handleNewDatabase(scanner);
+                case 3 -> {
                     System.out.println("Exiting program. Goodbye!");
-                    return; // Exit the main method and the program
+                    return;
                 }
-                default -> System.out.println("Invalid choice. Please try again."); // Invalid choice
+                default -> System.out.println("Invalid choice. Please try again.");
             }
         }
     }
 
-    // Function to handle the case when the user wants to choose an existing database
-    private static void handleExistingDatabase(Scanner scanner, DatabasesManager dbManager) {
-        // Ask for the name of the database
-        System.out.println("Enter the name of the database:");
-        String dbName = scanner.nextLine();
-        // Ask for the password of the database
-        System.out.println("Enter the password:");
-        String inputPassword = scanner.nextLine();
-
-        // Check if the database name and password are correct
-        if (dbManager.verifyDatabase(dbName, inputPassword)) {
-            System.out.println("Successfully connected to the database: " + dbName);
-            // Create a SiteManager for managing the database's sites
-            SiteManager siteManager = new SiteManager(new File(dbName + ".json"));
-            // Display the main action menu for the site manager
-            mainActionMenu(scanner, siteManager);
-        } else {
-            // Inform the user if the credentials are incorrect
-            System.out.println("Incorrect database name or password.");
+    private static void handleExistingDatabase(Scanner scanner) {
+        System.out.println("Enter database filename:");
+        String filename = scanner.nextLine();
+        File dbFile = new File(filename + ".json");
+        
+        if (!dbFile.exists()) {
+            System.out.println("Database does not exist.");
+            return;
         }
-    }
 
-    // Function to handle the case when the user wants to create a new database
-    private static void handleNewDatabase(Scanner scanner, DatabasesManager dbManager) {
-        // Ask for the name of the new database
-        System.out.println("Enter the name of the new database:");
-        String dbName = scanner.nextLine();
-
-        // Ask the user to choose a password option
-        System.out.println("Choose a password option:");
-        System.out.println("1. Enter a custom password");
-        System.out.println("2. Generate a random password");
-        // Read user choice for password generation
-        int passwordChoice = scanner.nextInt();
-        scanner.nextLine(); // Clear buffer
-
-        // Generate or ask for a custom password based on the user's choice
-        String password = switch (passwordChoice) {
-            case 1 -> {
-                System.out.println("Enter your custom password:");
-                yield scanner.nextLine(); // Return the custom password
-            }
-            case 2 -> {
-                // Generate a random password and display it
-                String generatedPassword = PasswordUtils.generateRandomPassword(12);
-                System.out.println("Generated password: " + generatedPassword);
-                yield generatedPassword; // Return the generated password
-            }
-            default -> {
-                System.out.println("Invalid choice. Defaulting to generated password.");
-                yield PasswordUtils.generateRandomPassword(12); // Default to random password
-            }
-        };
-
-        // Create the new database with the chosen name and password
-        dbManager.createDatabase(dbName, password);
-
-        // Create a SiteManager for the new database
-        SiteManager siteManager = new SiteManager(new File(dbName + ".json"));
-
-        // Display the main action menu for the site manager
-        mainActionMenu(scanner, siteManager);
-    }
-
-    // Function to display the main action menu for managing sites and performing actions
-    private static void mainActionMenu(Scanner scanner, SiteManager siteManager) {
-        // Ensure an encryption algorithm is selected (commented out here)
-        // siteManager.chooseEncryptionAlgorithm(scanner);
-
-        // Start an infinite loop to show the action menu
+        SiteManager siteManager = new SiteManager(dbFile);
+        siteManager.setEncryptionAlgorithm("Enigma");
+        
         while (true) {
-            // Display the options for actions in the site manager
-            System.out.println("Choose an action:");
-            System.out.println("1. Manage sites");
-            System.out.println("2. Decrypt a password");
-            System.out.println("3. Back to main menu");
-            // Read user choice for the action
-            int action = scanner.nextInt();
-            scanner.nextLine(); // Clear buffer
+            System.out.println("\nSite Management Menu:");
+            System.out.println("1. Add new site");
+            System.out.println("2. Modify site");
+            System.out.println("3. Delete site");
+            System.out.println("4. View all sites");
+            System.out.println("5. Return to main menu");
+            
+            int choice = scanner.nextInt();
+            scanner.nextLine();
 
-            // Process the action choice using a switch statement
-            switch (action) {
-                case 1 -> siteManager.manageSites(scanner, siteManager.encryptionAlgorithm); // Manage sites, passing the encryption algorithm
-                case 2 -> { // Decrypt a password
-                    siteManager.chooseEncryptionAlgorithm(scanner); // Choose the encryption algorithm
-                    siteManager.handleEncryptionDecryption(scanner); // Handle encryption/decryption process
+            switch (choice) {
+                case 1 -> addSite(scanner, siteManager);
+                case 2 -> modifySite(scanner, siteManager);
+                case 3 -> deleteSite(scanner, siteManager);
+                case 4 -> viewSites(siteManager);
+                case 5 -> {
+                    return;
                 }
-                case 3 -> { // Return to the main menu
-                    System.out.println("Returning to the main menu...");
-                    return; // Exit the current loop and return to the main menu
-                }
-                default -> System.out.println("Invalid choice. Please try again."); // Invalid choice
+                default -> System.out.println("Invalid choice. Please try again.");
             }
+        }
+    }
+
+    private static void handleNewDatabase(Scanner scanner) {
+        System.out.println("Enter new database filename:");
+        String filename = scanner.nextLine();
+        File dbFile = new File(filename + ".json");
+        
+        if (dbFile.exists()) {
+            System.out.println("Database already exists.");
+            return;
+        }
+
+        try {
+            SiteManager siteManager = new SiteManager(dbFile);
+            siteManager.setEncryptionAlgorithm("Enigma");
+            System.out.println("Database created successfully.");
+        } catch (Exception e) {
+            System.out.println("Error creating database: " + e.getMessage());
+        }
+    }
+
+    private static void addSite(Scanner scanner, SiteManager siteManager) {
+        System.out.println("Enter site name:");
+        String siteName = scanner.nextLine();
+        
+        System.out.println("Enter username:");
+        String username = scanner.nextLine();
+        
+        System.out.println("Enter password:");
+        String password = scanner.nextLine();
+
+        try {
+            siteManager.addSite(siteName, username, password);
+            System.out.println("Site added successfully.");
+        } catch (Exception e) {
+            System.out.println("Error adding site: " + e.getMessage());
+        }
+    }
+
+    private static void modifySite(Scanner scanner, SiteManager siteManager) {
+        System.out.println("Enter site name to modify:");
+        String siteName = scanner.nextLine();
+        
+        System.out.println("Enter new username (or press Enter to skip):");
+        String newUsername = scanner.nextLine();
+        
+        System.out.println("Enter new password (or press Enter to skip):");
+        String newPassword = scanner.nextLine();
+
+        try {
+            siteManager.modifySite(siteName, 
+                                 newUsername.isEmpty() ? null : newUsername,
+                                 newPassword.isEmpty() ? null : newPassword);
+            System.out.println("Site modified successfully.");
+        } catch (Exception e) {
+            System.out.println("Error modifying site: " + e.getMessage());
+        }
+    }
+
+    private static void deleteSite(Scanner scanner, SiteManager siteManager) {
+        System.out.println("Enter site name to delete:");
+        String siteName = scanner.nextLine();
+
+        try {
+            siteManager.deleteSite(siteName);
+            System.out.println("Site deleted successfully.");
+        } catch (Exception e) {
+            System.out.println("Error deleting site: " + e.getMessage());
+        }
+    }
+
+    private static void viewSites(SiteManager siteManager) {
+        List<Map<String, String>> sites = siteManager.getSites();
+        if (sites.isEmpty()) {
+            System.out.println("No sites found.");
+            return;
+        }
+
+        System.out.println("\nStored Sites:");
+        for (Map<String, String> site : sites) {
+            System.out.println("\nSite Name: " + site.get("siteName"));
+            System.out.println("Username: " + site.get("username"));
+            System.out.println("Password: " + site.get("password"));
         }
     }
 }

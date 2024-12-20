@@ -1,6 +1,6 @@
 package Classes;
 
-public class RC4 {
+public class RC4 implements EncryptionAlgorithm {
 
     private int[] S = new int[256];
     private int[] T = new int[256];

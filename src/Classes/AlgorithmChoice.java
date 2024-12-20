@@ -32,8 +32,9 @@ public class AlgorithmChoice {
 
     // Encrypts using the Vigenère cipher algorithm
     public static String encryptVigenere(String password, String key) {
-        // Uses the VigenereAlgo class to encrypt the password with the given key
-        return VigenereAlgo.encrypt(password, key);
+        VigenereAlgo vigenere = new VigenereAlgo();
+        vigenere.setKey(key);
+        return vigenere.encrypt(password);
     }
 
     /////////// DECRYPTION ///////////
@@ -64,7 +65,8 @@ public class AlgorithmChoice {
 
     // Decrypts using the Vigenère cipher algorithm
     public static String decryptVigenere(String encryptedMessage, String key) {
-        // Uses the VigenereAlgo class to decrypt the encrypted message with the given key
-        return VigenereAlgo.decrypt(encryptedMessage, key);
+        VigenereAlgo vigenere = new VigenereAlgo();
+        vigenere.setKey(key);
+        return vigenere.decrypt(encryptedMessage);
     }
 }

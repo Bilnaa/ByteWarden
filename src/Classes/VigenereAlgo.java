@@ -1,131 +1,106 @@
 package Classes;
 
+public class VigenereAlgo implements EncryptionAlgorithm {
+    private String key;
 
-public class VigenereAlgo {
-
-
-        String plainText = "TEST";
-
-        String key = "LONGKEY";
-        // Call encryption function and display the result
-        String encryptedText = encrypt(plainText, key);
-
-
-        // Call decryption function and display the result
-        String decryptedText = decrypt(encryptedText, key);
-
-
-    // Validate that the key does not contain numbers
-    private static boolean isValidKey(String key) {
-        for (char c : key.toCharArray()) {
-            if (Character.isDigit(c)) {
-                return false; // Reject if the key contains any digit
-            }
-        }
-        return true; // Key is valid if it contains no digits
-    }
-
-    // Encrypt the plaintext using the Vigenere cipher algorithm
-    public static String encrypt(String plainText, String key) {
-        if (!isValidKey(key)) {
+    @Override
+    public void init(String key) {
+        if (!isValidKey(key)) { // Check if the key is valid
             throw new IllegalArgumentException("Key must contain only alphabetic characters.");
         }
+        this.key = key; // Initialize the key
+    }
 
+    public void setKey(String key) {
+        if (!isValidKey(key)) { // Check if the key is valid
+            throw new IllegalArgumentException("Key must contain only alphabetic characters.");
+        }
+        this.key = key; // Set the key
+    }
+
+    @Override
+    public String encrypt(String plainText) {
+        return encryptVigenere(plainText, key); // Encrypt the plain text using Vigenere cipher
+    }
+
+    @Override
+    public String decrypt(String encryptedText) {
+        return decryptVigenere(encryptedText, key); // Decrypt the encrypted text using Vigenere cipher
+    }
+
+    private static boolean isValidKey(String key) {
+        for (char c : key.toCharArray()) {
+            if (Character.isDigit(c)) { // Check if the key contains any digits
+                return false;
+            }
+        }
+        return true; // Key is valid if it contains only alphabetic characters
+    }
+
+    private static String encryptVigenere(String plainText, String key) {
         StringBuilder encryptedText = new StringBuilder();
-
-        // Clean the key to contain only alphabetical characters
-        key = cleanKey(key);
-        // Generate a full-length key that matches the length of the plaintext
-        key = generateFullKey(plainText, key);
+        key = cleanKey(key); // Clean the key
+        key = generateFullKey(plainText, key); // Generate the full key
 
         for (int i = 0, keyIndex = 0; i < plainText.length(); i++) {
             char pi = plainText.charAt(i);
-
-            // Only encrypt alphabetic characters
-            if (Character.isLetter(pi)) {
+            if (Character.isLetter(pi)) { // Check if the character is a letter
                 boolean isUpperCase = Character.isUpperCase(pi);
                 char normalizedPi = Character.toLowerCase(pi);
                 char ki = key.charAt(keyIndex++);
 
-                // Encryption formula: Ci = (Pi + Ki) mod 26
-                char ci = (char) (((normalizedPi - 'a' + ki - 'a') % 26) + 'a');
-                encryptedText.append(isUpperCase ? Character.toUpperCase(ci) : ci);
+                char ci = (char) (((normalizedPi - 'a' + ki - 'a') % 26) + 'a'); // Encrypt the character
+                encryptedText.append(isUpperCase ? Character.toUpperCase(ci) : ci); // Append the encrypted character
             } else {
-                // Keep non-alphabetic characters unchanged
-                encryptedText.append(pi);
+                encryptedText.append(pi); // Append non-letter characters as is
             }
         }
-
-        return encryptedText.toString();
+        return encryptedText.toString(); // Return the encrypted text
     }
 
-    // Decrypt the ciphertext using the Vigenere cipher algorithm
-    public static String decrypt(String encryptedText, String key) {
-        if (!isValidKey(key)) {
-            throw new IllegalArgumentException("Key must contain only alphabetic characters.");
-        }
-
+    private static String decryptVigenere(String encryptedText, String key) {
         StringBuilder decryptedText = new StringBuilder();
-
-        // Clean the key to contain only alphabetical characters
-        key = cleanKey(key);
-        // Generate a full-length key that matches the length of the ciphertext
-        key = generateFullKey(encryptedText, key);
+        key = cleanKey(key); // Clean the key
+        key = generateFullKey(encryptedText, key); // Generate the full key
 
         for (int i = 0, keyIndex = 0; i < encryptedText.length(); i++) {
             char ci = encryptedText.charAt(i);
-
-            // Only decrypt alphabetic characters
-            if (Character.isLetter(ci)) {
+            if (Character.isLetter(ci)) { // Check if the character is a letter
                 boolean isUpperCase = Character.isUpperCase(ci);
                 char normalizedCi = Character.toLowerCase(ci);
                 char ki = key.charAt(keyIndex++);
 
-                // Decryption formula: Pi = (Ci - Ki + 26) mod 26
-                char pi = (char) (((normalizedCi - ki + 26) % 26) + 'a');
-                decryptedText.append(isUpperCase ? Character.toUpperCase(pi) : pi);
+                char pi = (char) (((normalizedCi - ki + 26) % 26) + 'a'); // Decrypt the character
+                decryptedText.append(isUpperCase ? Character.toUpperCase(pi) : pi); // Append the decrypted character
             } else {
-                // Keep non-alphabetic characters unchanged
-                decryptedText.append(ci);
+                decryptedText.append(ci); // Append non-letter characters as is
             }
         }
-
-        return decryptedText.toString();
+        return decryptedText.toString(); // Return the decrypted text
     }
 
-
-    // Generate a full-length key matching the text length, ignoring non-alphabetic characters
     public static String generateFullKey(String text, String key) {
         StringBuilder fullKey = new StringBuilder();
         int keyLength = key.length();
         int keyIndex = 0;
 
-        // go threw the text length
         for (int i = 0; i < text.length(); i++) {
             char currentChar = text.charAt(i);
-            if (Character.isLetter(currentChar)) {
-                // if keyLength > KeyIndex : troncate the keyLength to keyIndex
-                fullKey.append(key.charAt(keyIndex % keyLength));
+            if (Character.isLetter(currentChar)) { // Check if the character is a letter
+                fullKey.append(key.charAt(keyIndex % keyLength)); // Append the corresponding key character
                 keyIndex++;
             }
         }
-
-        return fullKey.toString();
+        return fullKey.toString(); // Return the full key
     }
 
-
-
-
-    // Remove non-alphabetical characters from the key
     private static String cleanKey(String key) {
         StringBuilder cleanedKey = new StringBuilder();
-
         for (char c : key.toCharArray()) {
-            if (Character.isLetter(c)) {
-                cleanedKey.append(Character.toLowerCase(c));
+            if (Character.isLetter(c)) { // Check if the character is a letter
+                cleanedKey.append(Character.toLowerCase(c)); // Append the lowercase letter
             }
         }
-
-        return cleanedKey.toString();
+        return cleanedKey.toString(); // Return the cleaned key
     }
 }

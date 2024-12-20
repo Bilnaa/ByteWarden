@@ -14,56 +14,96 @@ import java.util.Map;
 
 public class DatabasesManager {
     private final File databasesFile; // The file where the databases and their passwords are stored
-    private final Map<String, String> databases; // A map holding the database names as keys and their hashed passwords as values
-    private final Sha256 sha256 = new Sha256(); // Instance of the Sha256 class for password hashing
+    private final Map<String, DatabaseInfo> databases; // A map holding the database names as keys and their info as values
+    private final Sha256 sha256 = new Sha256();
 
-    // Constructor initializing the file and loading the existing databases
     public DatabasesManager(File databasesFile) {
         this.databasesFile = databasesFile;
-        this.databases = loadDatabases(); // Load existing databases from file
+        this.databases = new HashMap<>(); // Initialize the map before the try-catch block
+        if (!databasesFile.exists()) {
+            try {
+                databasesFile.createNewFile();
+                saveDatabases(); // Sauvegarder une base de données vide
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            this.databases.putAll(loadDatabases());
+        }
     }
 
-    // Function to verify if the provided password matches the stored password for a database
     public boolean verifyDatabase(String dbName, String password) {
-        String hashedPassword = sha256.calculateHash(password); // Hash the provided password
-        // Check if the database exists and the hashed password matches the stored one
-        return databases.containsKey(dbName) && databases.get(dbName).equals(hashedPassword);
-    }
-
-    // Function to create a new database with a hashed password
-    public void createDatabase(String dbName, String password) {
-        // If the database already exists, throw an exception
-        if (databases.containsKey(dbName)) {
-            throw new IllegalArgumentException("Database already exists.");
+        DatabaseInfo dbInfo = databases.get(dbName);
+        if (dbInfo == null) {
+            return false;
         }
-        // Hash the password and add the new database to the map
         String hashedPassword = sha256.calculateHash(password);
-        databases.put(dbName, hashedPassword);
-        saveDatabases(); // Save the updated databases list to the file
+        return hashedPassword.equals(dbInfo.getHashedPassword());
     }
 
-    // Function to load the databases from the JSON file
-    public Map<String, String> loadDatabases() {
-        // If the file doesn't exist, return an empty map
-        if (!databasesFile.exists()) return new HashMap<>();
+    public void createDatabase(String dbName, String password, String algorithm) {
+        String hashedPassword = sha256.calculateHash(password);
+        DatabaseInfo dbInfo = new DatabaseInfo(hashedPassword, algorithm);
+        databases.put(dbName, dbInfo);
+        saveDatabases();
+    }
+
+    public Map<String, DatabaseInfo> loadDatabases() {
+        if (!databasesFile.exists()) {
+            return new HashMap<>();
+        }
         try (FileReader reader = new FileReader(databasesFile)) {
-            // Use Gson to parse the JSON file into a map of database names and passwords
-            Gson gson = new Gson();
-            Type type = new TypeToken<Map<String, String>>() {}.getType(); // Define the type for the map
-            return gson.fromJson(reader, type); // Return the map of databases
+            Type type = new TypeToken<Map<String, DatabaseInfo>>() {}.getType();
+            return new Gson().fromJson(reader, type);
         } catch (IOException e) {
-            return new HashMap<>(); // Return an empty map if there was an error reading the file
+            e.printStackTrace();
+            return new HashMap<>();
         }
     }
 
-    // Function to save the databases and their hashed passwords to the JSON file
     private void saveDatabases() {
         try (FileWriter writer = new FileWriter(databasesFile)) {
-            // Use Gson to convert the map of databases to a JSON format and write it to the file
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            gson.toJson(databases, writer);
+            new GsonBuilder().setPrettyPrinting().create().toJson(databases, writer);
         } catch (IOException e) {
-            e.printStackTrace(); // Print the error if there is an issue writing to the file
+            e.printStackTrace();
+        }
+    }
+
+    public void encryptAllSites(EncryptionStack encryptionStack) {
+        for (Map.Entry<String, DatabaseInfo> entry : databases.entrySet()) {
+            String dbName = entry.getKey();
+            DatabaseInfo dbInfo = entry.getValue();
+            File siteFile = new File(dbName + ".json");
+            if (siteFile.exists()) {
+                try {
+                    String content = new String(java.nio.file.Files.readAllBytes(siteFile.toPath()));
+                    String encryptedContent = encryptionStack.encrypt(content);
+                    try (FileWriter writer = new FileWriter(siteFile)) {
+                        writer.write(encryptedContent);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    // Inner class to hold database information
+    public static class DatabaseInfo {
+        private final String hashedPassword;
+        private final String algorithm;
+
+        public DatabaseInfo(String hashedPassword, String algorithm) {
+            this.hashedPassword = hashedPassword;
+            this.algorithm = algorithm;
+        }
+
+        public String getHashedPassword() {
+            return hashedPassword;
+        }
+
+        public String getAlgorithm() {
+            return algorithm;
         }
     }
 }

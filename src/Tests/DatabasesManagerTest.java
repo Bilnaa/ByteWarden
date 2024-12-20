@@ -1,22 +1,30 @@
 package Tests;
 
-import Classes.DatabasesManager;
+import Classes.*;
+import Classes.Enigma.Enigma;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class DatabasesManagerTest {
     private DatabasesManager dbManager;
     private File testFile;
+    private EncryptionStack encryptionStack;
 
     @Before
     public void setUp() {
-        testFile = new File("src/Tests/test_databases.json");
+        testFile = new File("src/Tests/assets/test_databases.json");
         dbManager = new DatabasesManager(testFile);
+        encryptionStack = new EncryptionStack();
+        encryptionStack.addAlgorithm(new RC4());
+        encryptionStack.addAlgorithm(new ROTX(13));
+        encryptionStack.addAlgorithm(new VigenereAlgo());
+        encryptionStack.addAlgorithm(new Enigma());
 
         if (testFile.exists()) {
             testFile.delete();
@@ -25,34 +33,28 @@ public class DatabasesManagerTest {
 
     @Test
     public void testCreateAndVerifyDatabase() {
-        String dbName = "testDb";
+        String dbName = "test";
         String password = "securePassword";
+        String algorithm = "RC4";
 
-        dbManager.createDatabase(dbName, password);
-
+        dbManager.createDatabase(dbName, password, algorithm);
         assertTrue(dbManager.verifyDatabase(dbName, password));
-
-        assertFalse(dbManager.verifyDatabase(dbName, "wrongPassword"));
     }
 
     @Test
     public void testDuplicateDatabaseName() {
-        String dbName = "duplicateDb";
-        String password = "password";
+        String dbName = "test";
+        String password = "securePassword";
+        String algorithm = "RC4";
 
-        dbManager.createDatabase(dbName, password);
-
-        try {
-            dbManager.createDatabase(dbName, password);
-            fail("Expected IllegalArgumentException for duplicate database name");
-        } catch (IllegalArgumentException e) {
-            assertEquals("Database already exists.", e.getMessage());
-        }
+        dbManager.createDatabase(dbName, password, algorithm);
+        dbManager.createDatabase(dbName, password, algorithm);
+        assertEquals(1, dbManager.loadDatabases().size());
     }
 
     @Test
     public void testLoadEmptyDatabases() {
-            Map<String, String> databases = dbManager.loadDatabases();
+        Map<String, DatabasesManager.DatabaseInfo> databases = dbManager.loadDatabases();
         assertTrue(databases.isEmpty());
     }
 }

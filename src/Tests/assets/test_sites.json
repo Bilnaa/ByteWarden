@@ -1,3 +1,17 @@
-{
-  "sites": []
-}
+[
+  {
+    "siteName": "Site1",
+    "password": "bwqm1",
+    "username": "user1"
+  },
+  {
+    "siteName": "Site2",
+    "password": "sllr2",
+    "username": "user2"
+  },
+  {
+    "password": "olpfJyvf",
+    "siteName": "TestSite",
+    "username": "testUser"
+  }
+]
