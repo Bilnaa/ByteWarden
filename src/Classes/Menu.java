@@ -1,6 +1,7 @@
 package Classes;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -33,8 +34,12 @@ public class Menu {
             // Verify the database credentials
             if (dbManager.verifyDatabase(dbName, inputPassword)) {
                 System.out.println("Successfully connected to the database: " + dbName);
+
+                // Retrieve the encryption map for the database
+                Map<String, String> encryptionMap = dbManager.getEncryptionMap(dbName);
+
                 // Initialize the SiteManager to manage sites within the database
-                SiteManager siteManager = new SiteManager(new File(dbName + ".json"));
+                SiteManager siteManager = new SiteManager(new File(dbName + ".json"), encryptionMap);
                 siteManager.manageSites(scanner); // Begin managing sites
             } else {
                 System.out.println("Incorrect database name or password."); // Error message for invalid credentials
@@ -58,14 +63,55 @@ public class Menu {
                     : PasswordUtils.generateRandomPassword(12); // Generate a random password
 
             System.out.println("Generated password: " + password);
-            // Create the new database with the given name and password
-            dbManager.createDatabase(dbName, password);
+
+            // Ask the user for encryption methods
+            Map<String, String> encryptionMap = new HashMap<>();
+            boolean addMoreEncryptions = true;
+
+            while (addMoreEncryptions) {
+                System.out.println("Choose an encryption method:");
+                System.out.println("1. RotX");
+                System.out.println("2. RC4");
+                System.out.println("3. Vigenere");
+                System.out.println("4. Polybios");
+                System.out.println("5. Done adding encryptions");
+
+                int encryptionChoice = scanner.nextInt();
+                scanner.nextLine(); // Consume newline character
+
+                switch (encryptionChoice) {
+                    case 1 -> {
+                        System.out.println("Enter the shift value for RotX:");
+                        String shiftValue = scanner.nextLine();
+                        encryptionMap.put("RotX", shiftValue);
+                    }
+                    case 2 -> {
+                        System.out.println("Enter the key for RC4:");
+                        String rc4Key = scanner.nextLine();
+                        encryptionMap.put("RC4", rc4Key);
+                    }
+                    case 3 -> {
+                        System.out.println("Enter the key for Vigenere:");
+                        String vigenereKey = scanner.nextLine();
+                        encryptionMap.put("Vigenere", vigenereKey);
+                    }
+                    case 4 -> {
+                        encryptionMap.put("Polybios", "default");
+                    }
+                    case 5 -> addMoreEncryptions = false;
+                    default -> System.out.println("Invalid choice. Please choose a valid encryption method.");
+                }
+            }
+
+            // Create the new database with the given name, password, and encryption map
+            dbManager.createDatabase(dbName, password, encryptionMap);
+
             // Initialize the SiteManager for the new database
-            SiteManager siteManager = new SiteManager(new File(dbName + ".json"));
+            SiteManager siteManager = new SiteManager(new File(dbName + ".json"), encryptionMap);
             siteManager.manageSites(scanner); // Begin managing sites
         }
         // Handle the case where the user wants to access the help menu
-        else if (dbChoice == 3){
+        else if (dbChoice == 3) {
             HelpMenu.displayMenuHelp(scanner); // Display the help menu
         }
         // Handle invalid choices

@@ -42,6 +42,7 @@ public class HelpMenu {
                     break;
                 case 6:
                     System.out.println("Exiting help menu..."); // Exit message.
+                    Menu.main(null); // Return to the main menu.
                     break;
                 default:
                     System.out.println("Invalid choice. Please select a valid option."); // Handle invalid input.
