@@ -50,4 +50,20 @@ public class AESEncrypter {
         }
 
     }
+
+    public String decrypt(String cipherText) {
+        try
+        {
+            //Cipher cipher = Cipher.getInstance("AES");
+            Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+            cipher.init(Cipher.DECRYPT_MODE, this.secretKey);
+            //byte[] encrypted = cipher.doFinal(plainText.getBytes("UTF-8"));
+//            return new String(cipher.doFinal(Base64.getDecoder().decode(cipherText)), "UTF-8");
+            return new String(cipher.doFinal(Base64.getDecoder().decode(cipherText)));
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+    }
 }
