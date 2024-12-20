@@ -68,7 +68,7 @@ public class Menu {
             Map<String, String> encryptionMap = new HashMap<>();
             boolean addMoreEncryptions = true;
 
-            while (addMoreEncryptions) {
+            while (addMoreEncryptions) { //ask user what encryption method he wants to use
                 System.out.println("Choose an encryption method:");
                 System.out.println("1. RotX");
                 System.out.println("2. RC4");
@@ -80,25 +80,25 @@ public class Menu {
                 scanner.nextLine(); // Consume newline character
 
                 switch (encryptionChoice) {
-                    case 1 -> {
+                    case 1 -> { //case rotX ask value for future executions
                         System.out.println("Enter the shift value for RotX:");
                         String shiftValue = scanner.nextLine();
                         encryptionMap.put("RotX", shiftValue);
                     }
-                    case 2 -> {
+                    case 2 -> {//case rc4 ask value for future executions
                         System.out.println("Enter the key for RC4:");
                         String rc4Key = scanner.nextLine();
                         encryptionMap.put("RC4", rc4Key);
                     }
-                    case 3 -> {
+                    case 3 -> {//case vigenere ask value for future execution
                         System.out.println("Enter the key for Vigenere:");
                         String vigenereKey = scanner.nextLine();
                         encryptionMap.put("Vigenere", vigenereKey);
                     }
-                    case 4 -> {
+                    case 4 -> {//case vigenere ask value for future execution
                         encryptionMap.put("Polybios", "default");
                     }
-                    case 5 -> addMoreEncryptions = false;
+                    case 5 -> addMoreEncryptions = false;//leave the encryptions chain
                     default -> System.out.println("Invalid choice. Please choose a valid encryption method.");
                 }
             }
