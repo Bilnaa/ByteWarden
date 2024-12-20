@@ -19,7 +19,7 @@ public class DatabasesManager {
 
     public DatabasesManager(File databasesFile) {
         this.databasesFile = databasesFile;
-        this.databases = loadDatabases();
+        this.databases = loadDatabases() != null ? loadDatabases() : new HashMap<>();
     }
 
     public boolean verifyDatabase(String dbName, String password) {
@@ -50,6 +50,7 @@ public class DatabasesManager {
             return new HashMap<>();
         }
     }
+
 
     private void saveDatabases() {
         try (FileWriter writer = new FileWriter(databasesFile)) {

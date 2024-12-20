@@ -43,11 +43,10 @@ public class SiteManager {
     }
 
     public void addSite(String siteName, String username, String password) {
-        Map<String, String> site = Map.of(
-                "siteName", siteName,
-                "username", username,
-                "password", password
-        );
+        Map<String, String> site = new HashMap<>();
+        site.put("siteName", siteName);
+        site.put("username", username);
+        site.put("password", password);
         sites.add(site);
         saveSites();
     }
@@ -154,18 +153,61 @@ public class SiteManager {
     }
 
     private String encrypt(String input) {
-        if (encryptionMap.containsKey("RotX")) {
-            int shift = Integer.parseInt(encryptionMap.get("RotX"));
-            return ROTX.encryptROT(input, shift);
+        String result = input;
+        for (String method : encryptionMap.keySet()) {
+            switch (method) {
+                case "RotX" -> {
+                    int shift = Integer.parseInt(encryptionMap.get("RotX"));
+                    result = ROTX.encryptROT(result, shift);
+                }
+                case "RC4" -> {
+                    RC4 rc4 = new RC4();
+                    String key = encryptionMap.get("RC4");
+                    rc4.init(key);
+                    result = rc4.encrypt(result);
+                }
+                case "Vigenere" -> {
+                    String key = encryptionMap.get("Vigenere");
+                    result = VigenereAlgo.encrypt(result, key);
+                }
+                case "Polybios" -> {
+                }
+                case "AES" -> {
+                }
+            }
         }
-        return input;
+        return result;
     }
 
     private String decrypt(String input) {
-        if (encryptionMap.containsKey("RotX")) {
-            int shift = Integer.parseInt(encryptionMap.get("RotX"));
-            return ROTX.decryptROT(input, shift);
+        String result = input;
+        // Inverser l'ordre des méthodes pour le déchiffrement
+        List<String> methods = new ArrayList<>(encryptionMap.keySet());
+        Collections.reverse(methods);
+
+        for (String method : methods) {
+            switch (method) {
+                case "RotX" -> {
+                    int shift = Integer.parseInt(encryptionMap.get("RotX"));
+                    result = ROTX.decryptROT(result, shift);
+                }
+                case "RC4" -> {
+                    RC4 rc4 = new RC4();
+                    String key = encryptionMap.get("RC4");
+                    rc4.init(key);
+                    result = rc4.decrypt(result);
+                }
+                case "Vigenere" -> {
+                    String key = encryptionMap.get("Vigenere");
+                    result = VigenereAlgo.decrypt(result, key);
+                }
+                case "Polybios" -> {
+                }
+                case "AES" -> {
+                }
+            }
         }
-        return input;
+        return result;
     }
+
 }

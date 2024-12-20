@@ -96,7 +96,7 @@ public class Menu {
                         encryptionMap.put("Vigenere", vigenereKey);
                     }
                     case 4 -> {
-                        encryptionMap.put("Polybios", "default"); // No specific input for Polybios in this example
+                        encryptionMap.put("Polybios", "default");
                     }
                     case 5 -> addMoreEncryptions = false;
                     default -> System.out.println("Invalid choice. Please choose a valid encryption method.");
