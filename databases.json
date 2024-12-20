@@ -1,2 +1,18 @@
 {
+  "llucas": {
+    "name": "llucas",
+    "hashPassword": "eebc1115b82aea1ee598f927e19500c75d2e318eaa9d83fa5a7513e26dea608b",
+    "encryptionMap": {
+      "RotX": "12"
+    },
+    "salt": "NTNcG1Mv\u002604K"
+  },
+  "test": {
+    "name": "test",
+    "hashPassword": "6b3fcb519f1dac8495538eed6bf3963faf7d7a6762d6789869a2cb51a9bca91d",
+    "encryptionMap": {
+      "RotX": "12"
+    },
+    "salt": "sP5s3cWwMsOX"
+  }
 }

@@ -1,5 +1,6 @@
 package Classes;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -25,7 +26,9 @@ public class DatabasesManager {
     public boolean verifyDatabase(String dbName, String password) {
         if (!databases.containsKey(dbName)) return false;
         Database database = databases.get(dbName);
-        String hashedPassword = sha256.calculateHash(password);
+        String pepper = readPepperFromJson("pepper.json");
+
+        String hashedPassword = sha256.calculateHash(database.getSalt() + password + pepper);
         return database.getHashPassword().equals(hashedPassword);
     }
 
@@ -33,12 +36,24 @@ public class DatabasesManager {
         if (databases.containsKey(dbName)) {
             throw new IllegalArgumentException("Database already exists.");
         }
-        String hashedPassword = sha256.calculateHash(password);
-        Database newDatabase = new Database(dbName, hashedPassword, encryptionMap);
+        String pepper = readPepperFromJson("pepper.json");
+        String salt = PasswordUtils.generateRandomPassword(12);
+        String hashedPassword = sha256.calculateHash(salt + password + pepper);
+        Database newDatabase = new Database(dbName, hashedPassword, encryptionMap, salt);
         databases.put(dbName, newDatabase);
         saveDatabases();
     }
 
+    private String readPepperFromJson(String filePath) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            Map<String, String> jsonMap = objectMapper.readValue(new File(filePath), Map.class);
+            return jsonMap.get("pepper");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
     private Map<String, Database> loadDatabases() {
         if (!databasesFile.exists()) return new HashMap<>();
         try (FileReader reader = new FileReader(databasesFile)) {
@@ -66,11 +81,12 @@ public class DatabasesManager {
         private final String name;
         private final String hashPassword;
         private final Map<String, String> encryptionMap;
-
-        public Database(String name, String hashPassword, Map<String, String> encryptionMap) {
+        private final String salt;
+        public Database(String name, String hashPassword, Map<String, String> encryptionMap, String salt) {
             this.name = name;
             this.hashPassword = hashPassword;
             this.encryptionMap = encryptionMap;
+            this.salt = salt;
         }
 
         public String getName() {
@@ -84,6 +100,11 @@ public class DatabasesManager {
         public Map<String, String> getEncryptionMap() {
             return encryptionMap;
         }
+        public String getSalt(){
+            return salt;
+        }
+
+
     }
     public Map<String, String> getEncryptionMap(String dbName) {
         if (!databases.containsKey(dbName)) {

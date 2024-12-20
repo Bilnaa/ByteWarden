@@ -44,11 +44,26 @@ public class VigenereAlgo {
             // Only encrypt alphabetic characters
             if (Character.isLetter(pi)) {
                 boolean isUpperCase = Character.isUpperCase(pi);
-                char normalizedPi = Character.toLowerCase(pi);
+                char normalizedPi = Character.toLowerCase(pi); // the calculations are based on lowerCase alphabet
                 char ki = key.charAt(keyIndex++);
 
-                // Encryption formula: Ci = (Pi + Ki) mod 26
+
+                // encrypt formula
+                // normalizedPi - a : converts the character to an index between 0 and 25 (ex : normalizedPi = 'c' (ASCII 99), then 'c' - 'a' = 99-97 = 2)
+                // ki - 'a' similarly normalizes the key character to the same 0–25 range.
+
+                // normalizedPi - 'a' and ki - 'a' are added together to combine the plaintext and key in the normalized alphabet range.
+
+                // % 26 ensures the result wraps around if it exceeds 25 (e.g., for 'z').
+                // Example: If normalizedPi = 'z' (25) and ki = 'y' (24), then:
+                // (25 + 24) % 26 = 49 % 26 = 23 (which corresponds to 'x').
+
+
+                // + 'a' converts the normalized result (0–25) back into a valid ASCII character (alphabetical range).
+                // Example: If the result is 2, adding 'a' (97) gives 99, which corresponds to 'c' in ASCII.
+               // (char) : Casts the result back to a character
                 char ci = (char) (((normalizedPi - 'a' + ki - 'a') % 26) + 'a');
+                // + 'a' converts the normalized result (0 - 25) back into a valid ASCII character (97-122)
                 encryptedText.append(isUpperCase ? Character.toUpperCase(ci) : ci);
             } else {
                 // Keep non-alphabetic characters unchanged
