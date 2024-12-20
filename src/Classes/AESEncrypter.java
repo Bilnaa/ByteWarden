@@ -5,7 +5,6 @@ import javax.crypto.spec.SecretKeySpec;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 import java.util.Base64;
 
 /**
@@ -16,14 +15,13 @@ public class AESEncrypter {
 
     // Fields
     /**
-     * The one secret key required by the AES algorith.
-     * This secret key is based on a user inputed string.
+     * The one secret key required by the AES algorithm.
+     * This secret key is based on a user inputted string.
      */
     private SecretKeySpec secretKey;
 
     // Constructor
     public AESEncrypter(String secretKey) {
-
         try
         {
             byte[] key;
@@ -34,8 +32,6 @@ public class AESEncrypter {
             MessageDigest hashProvider = MessageDigest.getInstance("SHA-256");
             // store the hash of the secretKey instead of the key directly
             key = hashProvider.digest(key);
-            // Make the hashed key a fixed max 16 characters one.
-            key = Arrays.copyOf(key, 16);
             // create the encrypted secretKey for an AES based encrypter
             // based on the hash of the string provided by user.
             this.secretKey = new SecretKeySpec(key, "AES");
@@ -48,12 +44,12 @@ public class AESEncrypter {
         }
     }
 
+    // Functions
     /**
      * Encrypt a plain text using the AES algorithm.
      * @param plainText The text to encrypt.
      * @return The encrypted text.
      */
-    // Functions
     public String encrypt(String plainText) {
         try
         {
@@ -61,8 +57,18 @@ public class AESEncrypter {
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
             // Set the cipher in encryption mode
             cipher.init(Cipher.ENCRYPT_MODE, this.secretKey);
-            //byte[] encrypted = cipher.doFinal(plainText.getBytes("UTF-8"));
-            return Base64.getEncoder().encodeToString(cipher.doFinal(plainText.getBytes("UTF-8")));
+
+            // Get a byte array from the plainText String.
+            // Encryption and hashing algorithm work with byte arrays
+            // UTF-8 is a character encoding standard used for electronic communication.
+            byte[] plainTextBytes = plainText.getBytes("UTF-8");
+
+            // Cipher doFinal tell the encrypter to complete its task.
+            byte[] cipheredTextBytes = cipher.doFinal(plainTextBytes);
+
+            // Convert back the byte array to a string to be displayed after the completion of the algorithm.
+            // Base64 is a group of binary-to-text encoding schemes that transforms binary data into a sequence of printable characters.
+            return Base64.getEncoder().encodeToString(cipheredTextBytes);
         }
         catch (Exception e) {
             // throw an exception if an error occur
@@ -79,12 +85,16 @@ public class AESEncrypter {
     public String decrypt(String cipherText) {
         try
         {
-            //Cipher cipher = Cipher.getInstance("AES");
+            // Get the required object to decrypt text encrypted using the AES encryption format.
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+            // set the cypher in decryption mode.
             cipher.init(Cipher.DECRYPT_MODE, this.secretKey);
-            //byte[] encrypted = cipher.doFinal(plainText.getBytes("UTF-8"));
-            // return new String(cipher.doFinal(Base64.getDecoder().decode(cipherText)), "UTF-8");
-            return new String(cipher.doFinal(Base64.getDecoder().decode(cipherText)));
+
+            // Get a byteArray from the encrypted string.
+            byte[] cipherTextBytes = Base64.getDecoder().decode(cipherText);
+
+            // Cipher doFinal tell the encrypter to complete its task.
+            return new String(cipher.doFinal(cipherTextBytes),"UTF-8");
         }
         catch (Exception e) {
             throw new RuntimeException(e);
