@@ -4,6 +4,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class Sha256 extends Hash {
 
+    // function to calculate hash
     @Override
     public String calculateHash(String input) {
         try {

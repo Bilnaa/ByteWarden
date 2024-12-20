@@ -156,6 +156,7 @@ public class Menu {
 
             System.out.println("Generated password: " + password);
 
+            // Ask the user for encryption methods
             Map<String, String> encryptionMap = new HashMap<>();
             boolean addMoreEncryptions = true;
 
@@ -193,6 +194,8 @@ public class Menu {
                     default -> System.out.println("Invalid choice. Please choose a valid encryption method.");
                 }
             }
+
+            // Create the new database with the given name, password, and encryption map
 
             dbManager.createDatabase(dbName, password, encryptionMap);
             SiteManager siteManager = new SiteManager(new File(dbName + ".json"), encryptionMap);
