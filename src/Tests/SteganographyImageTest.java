@@ -12,6 +12,7 @@ public class SteganographyImageTest {
 
     private static final String IMAGE_PATH = "src/Tests/assets/image.png";
     private static final String IMAGE_PATH_SMALLEST_PNG = "src/Tests/assets/world_smallest.png";
+    private static final String IMAGE_ENCODED_PATH = "src/Tests/assets/image_encoded.png";
 
     @Test
     public void testEncodeDecode() throws IOException {
@@ -20,6 +21,13 @@ public class SteganographyImageTest {
         image.encode(message);
         String decodedMessage = image.decode();
         assertEquals(message, decodedMessage);
+    }
+
+    @Test
+    public void testDecodeImage() {
+        Image image = new Image(IMAGE_ENCODED_PATH);
+        String message = image.decode();
+        assertEquals("Hello", message);
     }
 
     @Test
