@@ -12,9 +12,11 @@ import java.util.*;
 public class SiteManager {
     private final File dbFile;
     private final List<Map<String, String>> sites;
+    private final Map<String, String> encryptionMap; // Méthodes de chiffrement associées
 
-    public SiteManager(File dbFile) {
+    public SiteManager(File dbFile, Map<String, String> encryptionMap) {
         this.dbFile = dbFile;
+        this.encryptionMap = encryptionMap;
         this.sites = loadSites();
     }
 
@@ -24,7 +26,8 @@ public class SiteManager {
             System.out.println("1. Add a site");
             System.out.println("2. Modify a site");
             System.out.println("3. Delete a site");
-            System.out.println("4. Exit");
+            System.out.println("4. Display all sites");
+            System.out.println("5. Exit");
             int choice = scanner.nextInt();
             scanner.nextLine();
 
@@ -32,14 +35,19 @@ public class SiteManager {
                 case 1 -> addSite(scanner);
                 case 2 -> modifySite(scanner);
                 case 3 -> deleteSite(scanner);
-                case 4 -> { return; }
+                case 4 -> displaySites();
+                case 5 -> { return; }
                 default -> System.out.println("Invalid choice.");
             }
         }
     }
 
     public void addSite(String siteName, String username, String password) {
-        Map<String, String> site = Map.of("siteName", siteName, "username", username, "password", password);
+        Map<String, String> site = Map.of(
+                "siteName", siteName,
+                "username", username,
+                "password", password
+        );
         sites.add(site);
         saveSites();
     }
@@ -63,12 +71,10 @@ public class SiteManager {
                 if (newPassword != null && !newPassword.isEmpty()) {
                     site.put("password", newPassword);
                 }
-                System.out.println("Modified site: " + site);
                 saveSites();
                 return;
             }
         }
-        System.out.println("Site not found for modification: " + siteName);
         throw new IllegalArgumentException("Site not found: " + siteName);
     }
 
@@ -82,7 +88,6 @@ public class SiteManager {
         modifySite(siteName, newUsername, newPassword);
     }
 
-
     public void deleteSite(String siteName) {
         sites.removeIf(site -> site.get("siteName").equals(siteName));
         saveSites();
@@ -94,25 +99,73 @@ public class SiteManager {
         deleteSite(siteName);
     }
 
+    public void displaySites() {
+        if (sites.isEmpty()) {
+            System.out.println("No sites available.");
+        } else {
+            for (Map<String, String> site : sites) {
+                String siteName = site.get("siteName");
+                String username = site.get("username");
+                String password = site.get("password");
+                System.out.println("Site Name: " + siteName);
+                System.out.println("Username: " + username);
+                System.out.println("Password: " + password);
+                System.out.println("-----------------------------");
+            }
+        }
+    }
 
     public List<Map<String, String>> loadSites() {
         if (!dbFile.exists()) return new ArrayList<>();
         try (FileReader reader = new FileReader(dbFile)) {
+            // Lire le fichier et déchiffrer son contenu
+            StringBuilder encryptedContent = new StringBuilder();
+            int c;
+            while ((c = reader.read()) != -1) {
+                encryptedContent.append((char) c);
+            }
+
+            // Déchiffrement du contenu entier
+            String decryptedContent = decrypt(encryptedContent.toString());
+
             Gson gson = new Gson();
-            Map<String, Object> data = gson.fromJson(reader, Map.class);
+            Map<String, Object> data = gson.fromJson(decryptedContent, Map.class);
             return (List<Map<String, String>>) data.get("sites");
         } catch (IOException e) {
+            e.printStackTrace();
             return new ArrayList<>();
         }
     }
 
     public void saveSites() {
         try (FileWriter writer = new FileWriter(dbFile)) {
+            // Conversion des sites en JSON
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             Map<String, Object> data = Map.of("sites", sites);
-            gson.toJson(data, writer);
+            String jsonContent = gson.toJson(data);
+
+            // Chiffrer le contenu JSON
+            String encryptedContent = encrypt(jsonContent);
+
+            writer.write(encryptedContent);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private String encrypt(String input) {
+        if (encryptionMap.containsKey("RotX")) {
+            int shift = Integer.parseInt(encryptionMap.get("RotX"));
+            return ROTX.encryptROT(input, shift);
+        }
+        return input;
+    }
+
+    private String decrypt(String input) {
+        if (encryptionMap.containsKey("RotX")) {
+            int shift = Integer.parseInt(encryptionMap.get("RotX"));
+            return ROTX.decryptROT(input, shift);
+        }
+        return input;
     }
 }
