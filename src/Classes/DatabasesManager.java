@@ -21,22 +21,23 @@ public class DatabasesManager {
         this.databasesFile = databasesFile;
         this.databases = loadDatabases() != null ? loadDatabases() : new HashMap<>();
     }
-
+    //Verify the hashed password with the password entered by the user
     public boolean verifyDatabase(String dbName, String password) {
         if (!databases.containsKey(dbName)) return false;
         Database database = databases.get(dbName);
         String hashedPassword = sha256.calculateHash(password);
         return database.getHashPassword().equals(hashedPassword);
     }
-
+    //create database object with user inputs
     public void createDatabase(String dbName, String password, Map<String, String> encryptionMap) {
         if (databases.containsKey(dbName)) {
             throw new IllegalArgumentException("Database already exists.");
         }
         String hashedPassword = sha256.calculateHash(password);
         Database newDatabase = new Database(dbName, hashedPassword, encryptionMap);
-        databases.put(dbName, newDatabase);
-        saveDatabases();
+        databases.put(dbName, newDatabase); //add the dbname and the db object to a map
+
+        saveDatabases();//save the map
     }
 
     private Map<String, Database> loadDatabases() {
@@ -61,7 +62,7 @@ public class DatabasesManager {
         }
     }
 
-    // Classe interne représentant une base de données
+    // class database to make the database manager easy to use
     public static class Database {
         private final String name;
         private final String hashPassword;
@@ -85,15 +86,16 @@ public class DatabasesManager {
             return encryptionMap;
         }
     }
+    //method to get the encryption map for the encryption and decryption during the database user selection
     public Map<String, String> getEncryptionMap(String dbName) {
-        if (!databases.containsKey(dbName)) {
+        if (!databases.containsKey(dbName)) { // if the database name doesn't exist
             throw new IllegalArgumentException("Database does not exist: " + dbName);
         }
         try (FileReader reader = new FileReader(databasesFile)) {
             Gson gson = new Gson();
-            Map<String, Map<String, Object>> allDatabases = gson.fromJson(reader, Map.class);
-            Map<String, Object> dbData = allDatabases.get(dbName);
-            return (Map<String, String>) dbData.get("encryptionMap");
+            Map<String, Map<String, Object>> allDatabases = gson.fromJson(reader, Map.class);  //get all the databases info from databases.json
+            Map<String, Object> dbData = allDatabases.get(dbName); //get the wanted database
+            return (Map<String, String>) dbData.get("encryptionMap"); // get all the encryption methods from the current database
         } catch (IOException e) {
             throw new RuntimeException("Failed to read databases file.", e);
         }

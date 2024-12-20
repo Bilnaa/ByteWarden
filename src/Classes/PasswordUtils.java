@@ -11,7 +11,7 @@ public class PasswordUtils {
         Random random = new Random();
         StringBuilder password = new StringBuilder();
         for (int i = 0; i < length; i++) {
-            password.append(chars.charAt(random.nextInt(chars.length())));
+            password.append(chars.charAt(random.nextInt(chars.length()))); // generate random password in range chars, from random int
         }
         return password.toString();
     }
