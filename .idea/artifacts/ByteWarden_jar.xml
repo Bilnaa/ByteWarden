@@ -147,6 +147,7 @@
       <element id="library" level="project" name="bytedeco.javacv.platform" />
       <element id="library" level="module" name="JUnit4" module-name="ByteWarden" />
       <element id="library" level="project" name="google.code.gson" />
+      <element id="library" level="project" name="fasterxml.jackson.core.databind" />
     </root>
   </artifact>
 </component>
