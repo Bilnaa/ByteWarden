@@ -37,8 +37,10 @@ jobs:
             wget https://repo1.maven.org/maven2/org/bytedeco/ffmpeg/7.1-1.5.11/ffmpeg-7.1-1.5.11.jar -P lib/
             wget https://repo1.maven.org/maven2/org/bytedeco/ffmpeg/7.1-1.5.11/ffmpeg-7.1-1.5.11-linux-x86_64.jar -P lib/
             wget https://repo1.maven.org/maven2/org/bytedeco/javacpp-platform/1.5.11/javacpp-platform-1.5.11.jar -P lib/
-      
-    
+            wget https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-databind/2.15.0/jackson-databind-2.15.0.jar -P lib/
+            wget https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-annotations/2.15.0/jackson-annotations-2.15.0.jar -P lib/
+            wget https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-core/2.15.0/jackson-core-2.15.0.jar -P lib/
+            
     - name: Compile
       run: |
         mkdir -p out
